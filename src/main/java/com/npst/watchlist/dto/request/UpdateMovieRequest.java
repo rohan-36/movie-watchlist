@@ -1,5 +1,6 @@
 package com.npst.watchlist.dto.request;
 
+import com.npst.watchlist.validation.ValidReleaseYear;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,6 +16,7 @@ public class UpdateMovieRequest {
     private String genre;
 
     @NotNull
+    @ValidReleaseYear
     private Integer releaseYear;
 
     public UpdateMovieRequest() {
