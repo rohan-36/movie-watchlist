@@ -5,12 +5,12 @@ services:
     container_name: movie-watchlist-postgres
 
     environment:
-      POSTGRES_DB: movie_watchlist
-      POSTGRES_USER: movie_user
-      POSTGRES_PASSWORD: movie_password
+      POSTGRES_DB: ${POSTGRES_DB:-movie_watchlist}
+      POSTGRES_USER: ${POSTGRES_USER:-movie_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-movie_password}
 
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
 
     volumes:
       - movie_watchlist_postgres_data:/var/lib/postgresql/data
@@ -19,7 +19,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U movie_user -d movie_watchlist"
+          "pg_isready -U ${POSTGRES_USER:-movie_user} -d ${POSTGRES_DB:-movie_watchlist}"
         ]
       interval: 5s
       timeout: 5s

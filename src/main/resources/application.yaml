@@ -3,15 +3,16 @@ spring:
     name: watchlist
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/movie_watchlist
-    username: movie_user
-    password: movie_password
+    url: jdbc:postgresql://${DB_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:movie_watchlist}
+    username: ${POSTGRES_USER:movie_user}
+    password: ${POSTGRES_PASSWORD:movie_password}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
       ddl-auto: validate
-      #Do not create or modify my database schema. Just verify that the schema matches the entity mappings.
+      # Do not create or modify the database schema.
+      # Only verify that the schema matches the entity mappings.
 
   flyway:
     enabled: true
