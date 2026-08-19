@@ -13,6 +13,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.mock.http.MockHttpInputMessage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -47,7 +48,10 @@ class GlobalExceptionHandlerTest {
     @Test
     void shouldMapMalformedJsonToInvalidInput() {
         ResponseEntity<ErrorResponse> response = handler.handleHttpMessageNotReadable(
-                new HttpMessageNotReadableException("invalid json"), request
+                new HttpMessageNotReadableException(
+                        "invalid json",
+                        new MockHttpInputMessage(new byte[0])
+                ), request
         );
 
         assertError(response, 400, "INVALID_INPUT", "Malformed JSON request.");
@@ -63,7 +67,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void shouldMapTypeMismatchToMalformedParameter() {
+    void shouldMapTypeMismatchToMalformedParameter() throws Exception {
         ResponseEntity<ErrorResponse> response = handler.handleMethodArgumentTypeMismatch(
                 new MethodArgumentTypeMismatchException(
                         "not-a-uuid", java.util.UUID.class, "id", methodParameter(), null
