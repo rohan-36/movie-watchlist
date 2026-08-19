@@ -10,7 +10,8 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
+      #Do not create or modify my database schema. Just verify that the schema matches the entity mappings.
 
   flyway:
     enabled: true
