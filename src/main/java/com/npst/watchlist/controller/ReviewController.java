@@ -19,12 +19,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.net.URI;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
+@Tag(name = "Reviews", description = "Movie review management APIs")
 public class ReviewController {
 
     private static final int MAX_PAGE_SIZE = 100;
@@ -35,6 +40,12 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
+    @Operation(summary = "Create a review", description = "Creates a review for an existing movie.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Review created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "404", description = "Movie not found")
+    })
     @PostMapping("/movies/{movieId}/reviews")
     public ResponseEntity<ReviewResponse> createReview(
             @PathVariable UUID movieId,
@@ -46,6 +57,12 @@ public class ReviewController {
                 .body(response);
     }
 
+    @Operation(summary = "List reviews", description = "Returns paginated reviews for a movie.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Reviews returned successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid pagination parameters"),
+            @ApiResponse(responseCode = "404", description = "Movie not found")
+    })
     @GetMapping("/movies/{movieId}/reviews")
     public ResponseEntity<PagedResponse<ReviewResponse>> listReviews(
             @PathVariable UUID movieId,
@@ -57,11 +74,22 @@ public class ReviewController {
         );
     }
 
+    @Operation(summary = "Get a review", description = "Returns a review by ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Review found"),
+            @ApiResponse(responseCode = "404", description = "Review not found")
+    })
     @GetMapping("/reviews/{id}")
     public ResponseEntity<ReviewResponse> getReview(@PathVariable UUID id) {
         return ResponseEntity.ok(reviewService.getReview(id));
     }
 
+    @Operation(summary = "Update a review", description = "Updates an existing review.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Review updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "404", description = "Review not found")
+    })
     @PutMapping("/reviews/{id}")
     public ResponseEntity<ReviewResponse> updateReview(
             @PathVariable UUID id,
@@ -70,11 +98,17 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.updateReview(id, request));
     }
 
+    @Operation(summary = "Delete a review", description = "Deletes an existing review.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Review deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Review not found")
+    })
     @DeleteMapping("/reviews/{id}")
     public ResponseEntity<Void> deleteReview(@PathVariable UUID id) {
         reviewService.deleteReview(id);
         return ResponseEntity.noContent().build();
     }
+
 
     private Pageable pageable(int page, int size) {
         if (page < 0) {
